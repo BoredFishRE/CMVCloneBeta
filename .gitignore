@@ -5,3 +5,4 @@ chat.js
 commands/entities
 commands/traits
 commands/utterances
+moderationstore.sqlite
