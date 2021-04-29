@@ -53,7 +53,7 @@ module.exports = {
       if (member) {
         try {
           let mutedRole = message.member.roles.cache.some(
-            (role) => role.name === "Muted"
+            (role) => role.name === "Cancelled"
           );
           let HasP1 = member.roles.cache.some((r) => r.name === "P1");
           let HasP2 = member.roles.cache.some((r) => r.name === "P2");
@@ -68,7 +68,7 @@ module.exports = {
               dynamic: "true",
             })
           );
-          let channel = message.guild.channels.cache.get("836328776950087730");
+          let channel = message.guild.channels.cache.get("764195825412603924");
           function muteMember() {
             let units = [
               "second",
@@ -92,7 +92,7 @@ module.exports = {
               muteReason = args.slice(3).join(" ");
             }
             let mutedTime = ms(muteTimeRaw);
-            let mutedRole = message.guild.roles.cache.get("833714274391949363");
+            let mutedRole = message.guild.roles.cache.get("705378572268863488");
             let checkTime = /^\d+$/.test(mutedTime);
             const muteTiming = fork("timeHandler/timeMute.js");
             switch (checkTime) {
