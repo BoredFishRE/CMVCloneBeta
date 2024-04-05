@@ -1,95 +1,119 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 module.exports = {
   name: "help",
   description: "List all of my commands or info about a specific command.",
   aliases: ["commands"],
-  execute(message, args) {
+  async execute(message, args) {
     let checkArgs = args == "moderation";
     switch (checkArgs) {
       case true:
-        const helpEmbed = new MessageEmbed()
+        const helpEmbed = new EmbedBuilder()
           .setColor("#ff0000")
           .setTitle("Moderation Commands")
-          .addField(
+          .addFields([
+            { name: "ban", value: "Bans a member. \n Usage: *ban [mention/ID] [reason]", inline: true },
+            { name: "embedBan", value: "Embed bans a member. \n Usage: *embedban [mention/ID]", inline: true },
+            { name: "kick", value: "Kicks a member. \n Usage: *kick [mention/ID]", inline: true },
+            { name: "mute", value: "Mutes a member. \n Usage: *mute [mention/ID] [Reason]", inline: true },
+            { name: "mutes", value: "Lists mutes for a member. \n Usage: *mutes [mention/ID]", inline: true },
+            { name: "purge", value: "Purges X amount of messages that are less than 14 days old. \n Usage: *purge [amount of messages]", inline: true },
+            { name: "revokePRole", value: "Incriments P role down one. \n Usage: *revokePRole [mention/ID]", inline: true },
+            { name: "removewarn", value: "Removes a saved warning. \n Usage: *removewarn [ReportID]", inline: true },
+            { name: "unlock", value: "Unlocks a locked channel. \n Usage: *unlock", inline: true },
+            { name: "warn", value: "Warns a member while incrimenting up one P role. \n Usage: *warn [mention/ID] [reason]", inline: true },
+            { name: "warnings", value: "Lists warnings for a member. \n Usage: *warnings [mention/ID]", inline: true },
+          ])
+          /*
+          .addFields(
             "ban",
             "Bans a member. \n Usage: *ban [mention/ID] [reason]",
             true
           )
-          .addField(
+          .addFields(
             "embedBan",
             "Embed bans a member. \n Usage: *embedban [mention/ID]",
             true
           )
-          .addField(
+          .addFields(
             "kick",
             "Kicks a member. \n Usage: *kick [mention/ID]",
             true
           )
-          .addField("lock", "Locks a channel. \n Usage: *lock", true)
-          .addField(
+          .addFields("lock", "Locks a channel. \n Usage: *lock", true)
+          .addFields(
             "mute",
             "Mutes a member. \n Usage: *mute [mention/ID] [Reason]",
             true
           )
-          .addField(
+          .addFields(
             "mutes",
             "Lists mutes for a member. \n Usage: *mutes [mention/ID]",
             true
           )
-          .addField(
+          .addFields(
             "purge",
             "Purges X amount of messages that are less than 14 days old. \n Usage: *purge [amount of messages]",
             true
           )
-          .addField(
+          .addFields(
             "revokePRole",
             "Incriments P role down one. \n Usage: *revokePRole [mention/ID]",
             true
           )
-          .addField(
+          .addFields(
             "removewarn",
             "Removes a saved warning. \n Usage: *removewarn [ReportID]",
             true
           )
-          .addField(
+          .addFields(
             "unlock",
             "Unlocks a locked channel. \n Usage: *unlock",
             true
           )
-          .addField(
+          .addFields(
             "warn",
             "Warns a member while incrimenting up one P role. \n Usage: *warn [mention/ID] [reason]",
             true
           )
-          .addField(
+          .addFields(
             "warnings",
             "Lists warnings for a member. \n Usage: *warnings [mention/ID]",
             true
           )
-          .setFooter(
-            "Requested by " + message.author.username,
-            message.author.displayAvatarURL({ format: "gif", dynamic: "true" })
-          );
-        message.channel.send(helpEmbed);
+          */
+          .setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "gif", dynamic: "true" })})
+          message.channel.send({ embeds: [helpEmbed] });
         break;
       default:
-        const helpEmbed1st = new MessageEmbed()
+        const helpEmbed1st = new EmbedBuilder()
           .setColor("#ff0000")
-          .addField("about", "About the bot.", true)
-          .addField("hack", ";)", true)
-          .addField("help", "This command! \n Usage: *help", true)
-          .addField("Serverinfo", "Lists info about server. \n Usage: b*serverinfo", true)
-          .addField("Userinfo", "Shows info about a user. \n Usage: b*userinfo [mention/ID]", true)
-          .addField(
+          .addFields([
+            { name: "about", value: "About the bot.", inline: true },
+            { name: "hack", value: ";)", inline: true },
+            { name: "help", value: "This command! \n Usage: *help", inline: true },
+            { name: "Serverinfo", value: "Lists info about server. \n Usage: *serverinfo", inline: true },
+            { name: "Userinfo", value: "Shows info about a user \n Usage: *userinfo [mention/ID]", inline: true },
+            { name: "For moderation commands do *help moderation", value: "Ex: *help moderation", inline: false },
+          ])
+          /*.addFields("about", "About the bot.", true)
+          .addFields("hack", ";)", true)
+          .addFields("help", "This command! \n Usage: *help", true)
+          .addFields("Serverinfo", "Lists info about server. \n Usage: b*serverinfo", true)
+          .addFields("Userinfo", "Shows info about a user. \n Usage: b*userinfo [mention/ID]", true)
+          .addFields(
             "For moderation commands do *help moderation",
             "Ex: *help moderation"
           )
+          */
+         .setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "gif", dynamic: "true" })})
+         /*
           .setFooter(
-            "Requested by " + message.author.username,
+            `Requested by ${message.author.username}`,
             message.author.displayAvatarURL({ format: "gif", dynamic: "true" })
           );
-        message.channel.send(helpEmbed1st);
+        */
+        message.channel.send({ embeds: [helpEmbed1st] });
     }
   },
 };

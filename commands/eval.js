@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const client = new Client({ intents: [GatewayIntentBits.Guilds], partials: [Partials.Channel] });
 const ms = require("ms");
 
 module.exports = {
@@ -13,7 +14,7 @@ module.exports = {
           .replace(/@/g, "@" + String.fromCharCode(8203));
       else return text;
     }
-    if (message.content.startsWith("*" + "eval")) {
+    if (message.content.startsWith("^" + "eval")) {
       if (message.author.id !== "388813100964642816") return;
       try {
         const code = args.join(" ");

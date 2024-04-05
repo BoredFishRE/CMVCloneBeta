@@ -1,5 +1,9 @@
-const { MessageEmbed } = require("discord.js");
-const { Sequelize } = require("sequelize");
+const {
+  EmbedBuilder
+} = require("discord.js");
+const {
+  Sequelize
+} = require("sequelize");
 
 const sequelize = new Sequelize("database", "user", "password", {
   host: "localhost",
@@ -9,21 +13,31 @@ const sequelize = new Sequelize("database", "user", "password", {
   storage: "moderationstore.sqlite",
 });
 const moderationLogging = sequelize.define("moderationstore.sqlite", {
-  ReprtID: {
+  ReportID: {
     type: Sequelize.STRING,
     unique: false,
     primaryKey: true,
+    allowNull: false,
   },
   Member: Sequelize.STRING,
   Reason: Sequelize.STRING,
 });
-
+async function checkready() {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+}
+checkready();
 module.exports = {
   name: "warn",
   description: "Warns a member",
   aliases: ["addwarn", "aw"],
   execute(message, args, client) {
     //Ignore this, just the error displayer.
+    moderationLogging.sync();
     function clean(text) {
       if (typeof text === "string")
         return text
@@ -31,8 +45,8 @@ module.exports = {
           .replace(/@/g, "@" + String.fromCharCode(8203));
       else return text;
     }
-    let warnLogging = "warnLogging";
-    moderationLogging.tableName = warnLogging;
+    //let warnLogging = "warnLogging";
+    //moderationLogging.tableName = warnLogging;
     //Gets guild for member ID
     let guild = message.guild;
     //Checks if executor is actually mod.
@@ -61,35 +75,36 @@ module.exports = {
           let HasP3 = member.roles.cache.some((r) => r.name === "P3");
           let HasP4 = member.roles.cache.some((r) => r.name === "P4");
           let HasP5 = member.roles.cache.some((r) => r.name === "P5");
-          const warnEmbed = new MessageEmbed().setColor("#ff0000").setAuthor(
-            member.user.username,
-            member.user.displayAvatarURL({
+          const warnEmbed = new EmbedBuilder().setColor("#ff0000").setAuthor({
+            name: member.user.username,
+            iconURL: member.user.displayAvatarURL({
               format: "jpg",
               dynamic: "true",
             })
-          );
+          });
           //Displays Member info in Console.
           console.log(member);
+
           function warnLog() {
             let msgArgs = message.content.split(" ");
             var ReportID = Math.floor(10000 + Math.random() * 90000);
             try {
-              let messageReason = msgArgs[2]
-                ? message.content.substring(
-                    msgArgs.slice(0, 2).join(" ").length + 1
-                  )
-                : "No reason provided";
+              let messageReason = msgArgs[2] ?
+                message.content.substring(
+                  msgArgs.slice(0, 2).join(" ").length + 1
+                ) :
+                "No reason provided";
               let userTag = member.user.tag;
               moderationLogging.create({
                 Member: userTag,
-                ReprtID: ReportID,
+                ReportID: ReportID,
                 Reason: messageReason,
               });
               moderationLogging.sync();
-              warnEmbed.addField(
-                `Warn saved with reason ${messageReason}`,
-                `Report ID ${ReportID}`
-              );
+              warnEmbed.addFields({
+                name: `Warn saved with reason ${messageReason}`,
+                value: `Report ID ${ReportID}`
+              });
               member.send(
                 `You've been warned in CarMightyVids Community Server for the reason: ${messageReason}`
               );
@@ -111,58 +126,60 @@ module.exports = {
               //Adds P2
               member.roles.add(P2);
               //Displays confirm message.
-              warnEmbed.addField(
-                `${member.user.tag} had P1, assigning P2.`,
-                "2nd warn"
-              );
+              warnEmbed.addFields({
+                name: `${member.user.tag} had P1, assigning P2.`,
+                value: "2nd warn"
+              });
               break;
-            //Checks if user has P2
+              //Checks if user has P2
             case HasP2:
               //Remove P2
               member.roles.remove(P2);
               //Adds P3, you get the idea.
               member.roles.add(P3);
-              warnEmbed.addField(
-                `${member.user.tag} had P2, assigning P3.`,
-                "3rd warn"
-              );
+              warnEmbed.addFields({
+                name: `${member.user.tag} had P2, assigning P3.`,
+                value: "3rd warn"
+              });
               break;
-            //Checks if has P3
+              //Checks if has P3
             case HasP3:
               member.roles.remove(P3);
               member.roles.add(P4);
-              warnEmbed.addField(
-                `${member.user.tag} had P3, assigning P4.`,
-                "4th warn"
-              );
+              warnEmbed.addFields({
+                name: `${member.user.tag} had P3, assigning P4.`,
+                value: "4th warn"
+              });
               break;
-            //Checks if has P4
+              //Checks if has P4
             case HasP4:
               member.roles.remove(P4);
               member.roles.add(P5);
-              warnEmbed.addField(
-                `${member.user.tag} had P4, assigning P5. This is this member's last chance.`,
-                "5th warn"
-              );
+              warnEmbed.addFields({
+                name: `${member.user.tag} had P4, assigning P5. This is this member's last chance.`,
+                value: "5th warn"
+              });
               break;
-            //Checks if has P5
+              //Checks if has P5
             case HasP5:
               //Doesn't do much. Just reminds mods to ban.
-              warnEmbed.addField(
-                `${member.user.tag} should probably be banned but idk I'm just a bot.`,
-                "Not gonna lie..."
-              );
+              warnEmbed.addFields({
+                name: `${member.user.tag} should probably be banned but idk I'm just a bot.`,
+                value: "Not gonna lie..."
+              });
               break;
-            //If Member doesn't have any P roles, add P1.
+              //If Member doesn't have any P roles, add P1.
             default:
               member.roles.add(P1);
-              warnEmbed.addField(
-                `This is ${member.user.tag}'s first warn. They are now at P1.`,
-                "1st warn."
-              );
+              warnEmbed.addFields({
+                name: `This is ${member.user.tag}'s first warn. They are now at P1.`,
+                value: "1st warn."
+              });
           }
           warnLog();
-          message.channel.send(warnEmbed);
+          message.channel.send({
+            embed: [warnEmbed]
+          });
           //Error Handler.
         } catch (error) {
           message.channel.send(
